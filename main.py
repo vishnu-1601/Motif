@@ -188,7 +188,7 @@ class MotifPro(ctk.CTk):
         card.grid(row=row, column=col, padx=10, pady=10)
         card.grid_propagate(False)
         # LOAD IMAGE FROM ASSETS
-        img_path = os.path.join(self.assets_path, "3m.jpg")
+        img_path = os.path.join(self.assets_path, "Thumbnail.jpg")
         try:
             # Using CTkImage is the modern way to handle images in CustomTkinter
             cover_img = ctk.CTkImage(light_image=Image.open(img_path),
