@@ -12,8 +12,12 @@ ctk.set_appearance_mode("Dark")
 class MotifPro(ctk.CTk):
     def __init__(self):
         super().__init__()
+        # Get the absolute path to the directory where main.py is located
+        self.base_path = os.path.dirname(os.path.realpath(__file__))
+        # Link to the assets folder
+        self.assets_path = os.path.join(self.base_path, "assets")
 
-        # --- ENGINE SETUP ---
+        # ENGINE SETUP
         self.is_paused = False
         self.filename = None
         mixer.init()
@@ -23,7 +27,7 @@ class MotifPro(ctk.CTk):
         self.geometry("1100x750") # Slightly taller for better proportions
         self.configure(fg_color="#0F0F0F") 
 
-        # --- GRID LAYOUT ---
+        # GRID LAYOUT
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -93,7 +97,7 @@ class MotifPro(ctk.CTk):
                                                font=ctk.CTkFont(size=11), text_color="#777777", anchor="w")
         self.now_playing_artist.pack(anchor="w")
 
-        # CENTER Side (Tightened Spacing)
+        # CENTER Side (Spacing)
         self.controls_master = ctk.CTkFrame(self.player_bar, fg_color="transparent")
         self.controls_master.pack(expand=True, fill="both", pady=5)
 
@@ -137,7 +141,7 @@ class MotifPro(ctk.CTk):
         self.vol_slider.set(0.7)
         self.vol_slider.pack(side="left")
 
-    # --- LOGIC METHODS ---
+    # LOGIC METHODS
     def choose_music(self):
         file_path = filedialog.askopenfilename(filetypes=[("Music Files", "*.mp3")])
         if file_path:
@@ -183,13 +187,19 @@ class MotifPro(ctk.CTk):
         card = ctk.CTkFrame(master, fg_color="#1E1E1E", corner_radius=15, width=190, height=260)
         card.grid(row=row, column=col, padx=10, pady=10)
         card.grid_propagate(False)
-        art_placeholder = ctk.CTkLabel(card, text="🎵", font=("Arial", 50), 
-                                       fg_color="#2A2A2A", width=170, height=170, corner_radius=10)
+        # LOAD IMAGE FROM ASSETS
+        img_path = os.path.join(self.assets_path, "3m.jpg")
+        try:
+            # Using CTkImage is the modern way to handle images in CustomTkinter
+            cover_img = ctk.CTkImage(light_image=Image.open(img_path),
+                                     dark_image=Image.open(img_path),
+                                     size=(170, 170))
+            art_placeholder = ctk.CTkLabel(card, text="", image=cover_img, corner_radius=10)
+        except Exception as e:
+            # Fallback if image is missing
+            art_placeholder = ctk.CTkLabel(card, text="🎵", font=("Arial", 50), 
+                                           fg_color="#2A2A2A", width=170, height=170, corner_radius=10)
         art_placeholder.pack(pady=10, padx=10)
-        t_label = ctk.CTkLabel(card, text=title, font=ctk.CTkFont(size=14, weight="bold"), anchor="w")
-        t_label.pack(fill="x", padx=12)
-        a_label = ctk.CTkLabel(card, text=artist, font=ctk.CTkFont(size=12), text_color="#888888", anchor="w")
-        a_label.pack(fill="x", padx=12)
 
     def create_nav_button(self, text, row_index):
         btn = ctk.CTkButton(self.sidebar_frame, text=text, anchor="w", fg_color="transparent", 
